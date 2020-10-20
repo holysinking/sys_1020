@@ -52,7 +52,7 @@
 
 //5.校验不通过，跳转登录页
 
-import { login } from "../../api/";
+import { login } from "@/api";
 export default {
   data() {
     //jsDoc
@@ -91,30 +91,33 @@ export default {
   methods: {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
-        if (valid) {
-          //代表本地校验通过
-          //打开登陆加载动画
-          const loading = this.$loading()
-          let { username, passowrd } = this.loginForm;
+        if (valid) {//代表本地校验通过
+          // 打开登陆加载动画
+          const loading = this.$loading({
+            lock: true,
+            text: "正在登入...",
+            spinner: "el-icon-loading",
+            background: "rgba(0, 0, 0, 0.7)",
+          });
+          let { username, password } = this.loginForm;
           //发送登入请求
           login(username, password)
             .then((res) => {
               //服务器响应，关闭loading
-
-              loading.close()
-
-
-              if (res.data.data) {
+              loading.close();
+              if (res.data.state) {
+                this.$message.success("登入成功")
                 //代表用户名密码正确
                 localStorage.setItem("stu-token", res.data.token);
                 //跳转到主页
                 this.$router.push("/");
               } else {
                 //用户名密码错误
-                this.$message.error("用户名密码错误")
+                this.$message.error("用户名密码错误");
               }
             })
             .catch((err) => {
+              console.log(1);
               console.log(err);
             });
         } else {

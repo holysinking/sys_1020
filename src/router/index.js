@@ -11,7 +11,7 @@ const routes = [
     component: Login
   },
   {
-    path: "/home",
+    path: "/",
     name: "home",
     component: () =>
       import(/* webpackChunkName: "about" */ "../pages/Home")

@@ -8,13 +8,13 @@
           class="el-menu-vertical-demo"
           @open="handleOpen"
           @close="handleClose"
-          :collapse="isCollapse">
-
+          :collapse="isCollapse"
+        >
           <el-menu-item index="0">
             <i class="el-icon-menu"></i>
             <span slot="title">管理首页</span>
           </el-menu-item>
-          
+
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
@@ -54,15 +54,17 @@
                   style="margin-bottom: 20px;"
                 >
                   <el-radio-button
-                    v-if="flag"
+                    v-if="isCollapse"
                     :label="false"
-                    v-on:click="checkButton"
                   >
                     <i class="el-icon-s-fold"></i>
                   </el-radio-button>
-                  <el-radio-button v-if="!flag" :label="true"
-                    >收起</el-radio-button
+                  <el-radio-button
+                    v-if="!isCollapse"
+                    :label="true"
                   >
+                    收起
+                  </el-radio-button>
                 </el-radio-group>
               </div>
             </el-col>
@@ -97,7 +99,7 @@
   /* background: black; */
   display: inline-block;
 }
-.el-menu-item-group__title{
+.el-menu-item-group__title {
   padding: 0;
 }
 .el-menu-vertical-demo:not(.el-menu--collapse) {
@@ -160,7 +162,6 @@
 export default {
   data() {
     return {
-      flag: true,
       isCollapse: true,
     };
   },
@@ -170,10 +171,6 @@ export default {
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath);
-    },
-    checkButton() {
-      this.flag = !flag;
-      console.log(1);
     },
   },
 };
