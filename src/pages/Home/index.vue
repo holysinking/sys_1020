@@ -22,7 +22,7 @@
             <el-col :span="6">
               <div class="grid-content bg-purple">
                 <div id="logo-img">
-                  <img src="" alt="" />
+                  <el-avatar :size="30" src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603204308479&di=a8fc9b845a0200929f64bbbef91d7eb5&imgtype=0&src=http%3A%2F%2Fcdn.duitang.com%2Fuploads%2Fitem%2F201408%2F24%2F20140824154253_45Hay.png"></el-avatar>
                 </div>
                 <span>欢迎您:</span>
                 <b class="nickname">{{ userInfo.nickname }}</b>
@@ -74,6 +74,7 @@ export default {
 };
 </script>
 <style>
+/* 退出按钮样式 */
 .quit {
   cursor: pointer;
   color: hotpink;
@@ -127,6 +128,10 @@ body > .el-container {
   height: 35px;
   border-radius: 50%;
   vertical-align: middle;
+  margin-right: 10px;
+}
+/* 顶部导航栏 字体间距 */
+.nickname{
   margin-right: 10px;
 }
 </style>
