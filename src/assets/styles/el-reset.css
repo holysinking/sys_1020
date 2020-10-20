@@ -1,0 +1,17 @@
+.home .el-carousel__container {
+    height: 500px;
+}
+
+/* 登录页面 */
+.login-page .el-form-item__label {
+    color: #fff !important;
+}
+
+.login-page .el-input__inner {
+    transition: all 0.5s;
+    height: 40px;
+    line-height: 100%;
+    overflow: hidden;
+    color: #fff !important;
+    background-color: transparent !important;
+}
