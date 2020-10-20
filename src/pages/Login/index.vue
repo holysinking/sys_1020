@@ -53,6 +53,7 @@
 //5.校验不通过，跳转登录页
 
 import { login } from "@/api";
+import { mapMutations } from "vuex";
 export default {
   data() {
     //jsDoc
@@ -89,9 +90,11 @@ export default {
     };
   },
   methods: {
+    ...mapMutations(["SET_USERINFO"]),
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
-        if (valid) {//代表本地校验通过
+        if (valid) {
+          //代表本地校验通过
           // 打开登陆加载动画
           const loading = this.$loading({
             lock: true,
@@ -106,9 +109,16 @@ export default {
               //服务器响应，关闭loading
               loading.close();
               if (res.data.state) {
-                this.$message.success("登入成功")
+                this.$message.success("登入成功");
                 //代表用户名密码正确
                 localStorage.setItem("stu-token", res.data.token);
+                localStorage.setItem(
+                  "stu-userInfo",
+                  JSON.stringify(res.data.userInfo)
+                );
+                this.SET_USERINFO(res.data.userInfo);
+                //更改vuex中state['userInfo]的值
+
                 //跳转到主页
                 this.$router.push("/");
               } else {
@@ -117,7 +127,6 @@ export default {
               }
             })
             .catch((err) => {
-              console.log(1);
               console.log(err);
             });
         } else {

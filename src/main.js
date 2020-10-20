@@ -19,6 +19,24 @@ Vue.use(ElementUI);
 //注册组件
 // Vue.component()
 
+//路由前置钩子（导航守卫）
+router.beforeEach((to, from, next) => {
+  //用户登入之后，localStorage中有token
+  let token = localStorage.getItem('stu-token')
+  if (token) {
+    //如果是登陆注册页面直接放行
+    next()
+  } else { //没token
+    if (to.path === "/login") {
+      next()
+    } else { //访问不是登录注册页
+      next({
+        path: "/login"
+      })
+    }
+  }
+})
+
 new Vue({
   router,
   store,

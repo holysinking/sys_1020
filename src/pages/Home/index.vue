@@ -24,8 +24,9 @@
                 <div id="logo-img">
                   <img src="" alt="" />
                 </div>
-                <span>欢迎您:管理员</span>
-                <span>退出</span>
+                <span>欢迎您:</span>
+                <b class="nickname">{{ userInfo.nickname }}</b>
+                <span class="quit" @click="quit">退出</span>
               </div>
             </el-col>
           </el-row>
@@ -40,27 +41,43 @@
 </template>
 
 <script>
+import { getLoginLog } from "@/api";
 import subMenu from "@/components/subMenu";
+import { mapState } from "vuex";
 export default {
   data() {
     return {
       isCollapse: true,
     };
   },
+  computed: {
+    ...mapState(["userInfo"]),
+  },
   methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
+    quit() {
+      //退出登录
+      //1.清除token和userInfo
+      //2.跳转到登入页面
+      localStorage.removeItem("stu-token")
+      localStorage.removeItem("stu-userInfo")
+      this.$router.push("/login")
     },
   },
   components: {
     subMenu,
   },
+  mounted() {
+    getLoginLog().then((res) => {
+      console.log(res);
+    });
+  },
 };
 </script>
 <style>
+.quit {
+  cursor: pointer;
+  color: hotpink;
+}
 /* 顶栏布局 */
 .grid-content {
   border-radius: 4px;
