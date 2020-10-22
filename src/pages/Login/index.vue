@@ -1,42 +1,64 @@
 <template>
   <div class="login-page">
     <video
-      src="@/assets/video/bg_video.d2d602a9.mp4"
+      src="@/assets/video/bg_video.mp4"
       loop
       autoplay="autoplay"
       muted
     ></video>
     <div id="imgs"></div>
     <div class="loginContainer">
-      <el-form
-        :model="loginForm"
-        status-icon
-        :rules="rules"
-        ref="loginForm"
-        label-width="100px"
-        class="demo-loginForm"
-      >
-        <h1 class="title">学员管理系统</h1>
-        <el-form-item label="用户名" prop="username">
-          <el-input
-            type="text"
-            v-model="loginForm.username"
-            autocomplete="off"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input
-            type="password"
-            v-model="loginForm.password"
-            autocomplete="off"
-          ></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submitForm('loginForm')"
-            >提交</el-button
-          >
-        </el-form-item>
-      </el-form>
+      <h1 class="title">学员管理系统</h1>
+      <i
+        :class="[
+          'jiaobiao',
+          'iconfont',
+          isWechat ? 'icon-diannaojiaobiao' : 'icon-erweimajiaobiao',
+        ]"
+        @click="isWechat = !isWechat"
+      ></i>
+      <transition>
+        <!-- 二维码 -->
+        <div class="wechatLogin" v-if="isWechat">
+          <div class="scancode">
+            <div class="marsk" v-if="isScan">
+              <i class="iconfont icon-saomachenggong"></i>
+            </div>
+            <img src="" width="200" alt="" />
+          </div>
+          <p>请使用微信扫码登入</p>
+        </div>
+        <el-form
+          v-else
+          :model="loginForm"
+          status-icon
+          :rules="rules"
+          ref="loginForm"
+          label-width="100px"
+          class="demo-loginForm"
+        >
+          <el-form-item label="用户名" prop="username">
+            <el-input
+              type="text"
+              v-model="loginForm.username"
+              autocomplete="off"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="password">
+            <el-input
+              type="password"
+              v-model="loginForm.password"
+              @keydown.13.native="submitForm('loginForm')"
+              autocomplete="off"
+            ></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="submitForm('loginForm')"
+              >提交</el-button
+            >
+          </el-form-item>
+        </el-form>
+      </transition>
     </div>
   </div>
 </template>
@@ -116,18 +138,19 @@ export default {
                   "stu-userInfo",
                   JSON.stringify(res.data.userInfo)
                 );
-                this.SET_USERINFO(res.data.userInfo);
-                //更改vuex中state['userInfo]的值
-
                 //跳转到主页
                 this.$router.push("/");
+                this.loginForm.username = "";
+                this.loginForm.password = "";
+                this.SET_USERINFO(res.data.userInfo);
+                //更改vuex中state['userInfo]的值
               } else {
                 //用户名密码错误
                 this.$message.error("用户名密码错误");
               }
             })
             .catch((err) => {
-              console.log(err);
+              console.log(err, "err");
             });
         } else {
           //代表本地校验不通过
@@ -143,10 +166,32 @@ export default {
 };
 </script>
 <style scoped>
+i.icon-saomachenggong {
+  font-size: 50px;
+  color: #26c28f;
+  line-height: 200px;
+}
+.scancode {
+  position: relative;
+  height: 220px;
+}
+.v-enter,
+.v-leave-to {
+  opacity: 0;
+}
+.v-enter-to,
+.v-leave {
+  opacity: 1;
+}
+.v-enter-active,
+.v-leave-active {
+  transition: all 2s;
+}
 .login-page {
   width: 100%;
   height: 100%;
-  position: relative;
+  background: url("../../assets/imgs/bg.jpg");
+  overflow: hidden;
 }
 .loginContainer {
   width: 400px;
@@ -160,6 +205,44 @@ export default {
   background: rgba(0, 0, 0, 0.2);
 }
 /* 背景设置 */
+.jiaobiao {
+  width: 80px;
+  height: 80px;
+  overflow: hidden;
+  position: absolute;
+  right: -1px;
+  top: -2px;
+  font-size: 50px;
+  text-align: right;
+  color: #e2e2e2;
+  cursor: pointer;
+}
+.wechatLogin {
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  color: #fff;
+}
+.wechatLogin .marsk {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  left: 25%;
+  z-index: 1;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+.wechatLogin img {
+  position: absolute;
+  left: 25%;
+}
+.wechatLogin p {
+  text-align: center;
+}
+.title {
+    color: #fff;
+    margin-top: 100px;
+    margin-bottom: 50px;
+  }
 video {
   position: fixed;
   right: 0;
@@ -174,6 +257,16 @@ video {
   width: 50%;
   height: 50%;
   background: url("../../assets/imgs/bg2.png") 0 0 / contain no-repeat;
+}
+.left {
+  width: 50%;
+  height: 100%;
+  background-image: url("../../assets/imgs/bg2.png");
+  background-repeat: no-repeat;
+  background-size: 50%;
+  position: absolute;
+  opacity: 0.7;
+  background-position: 60% 65%;
 }
 /* 表单样式 */
 .el-form {
@@ -210,3 +303,4 @@ video {
   margin-bottom: 50px;
 }
 </style>
+

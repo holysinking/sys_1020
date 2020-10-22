@@ -2,6 +2,10 @@ body {
     margin: 0;
 }
 
+body,
+ul,
+p,
+li,
 h1,
 h2,
 h3,
@@ -23,6 +27,22 @@ input {
     border: 0;
     border: 1px solid black;
 }
-html,body,#app,.home-page,.el-container{
+
+html,
+body,
+#app,
+.home-page,
+.el-container {
     height: 100%;
+}
+/* 进度条样式 */
+#nprogress .bar {
+    /*进度条样式*/
+    background: hotpink !important;
+}
+
+.spinner-icon {
+    /*圆圈样式*/
+    border-top-color: #f56c6c !important;
+    border-left-color: #003df1 !important;
 }
