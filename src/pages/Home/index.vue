@@ -8,7 +8,7 @@
           :default-active="$route.path"
           class="el-menu-vertical-demo"
           :router="true"
-          :unique-opened='true'
+          :unique-opened="true"
           :collapse="isCollapse"
         >
           <subMenu :sideMenu="$store.state.sideMenu"></subMenu>
@@ -73,11 +73,11 @@ export default {
   data() {
     return {
       //控制menu是否收起
-      isCollapse: false,
+      isCollapse: false
     };
   },
   computed: {
-    ...mapState(["userInfo", "sideMenu", "crumbsList"]),
+    ...mapState(["userInfo", "sideMenu", "crumbsList"])
   },
   methods: {
     quit() {
@@ -97,10 +97,10 @@ export default {
         iconfont.innerHTML = `<i class="el-icon-s-fold" style="color:#fff"></i>`;
       }
       this.isCollapse = !this.isCollapse;
-    },
+    }
   },
   components: {
-    subMenu,
+    subMenu
   },
   created() {
     // this.$store.dispatch("FETCH_MENULIST");
@@ -109,7 +109,7 @@ export default {
     // getLoginLog().then((res) => {
     //   // console.log(res);
     // });
-  },
+  }
 };
 </script>
 <style>

@@ -2,18 +2,20 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
+import bus from "./utils/bus"
+Vue.prototype.$bus = bus
 // 引入element-ui
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
+import ElementUI from "element-ui";
+import "element-ui/lib/theme-chalk/index.css";
 // 引入全局css和element-rest
-import "@/assets/styles/base.css"
-import "@/assets/styles/el-reset.css"
-import "@/assets/fonts/iconfont.css"
-import locale from 'element-ui/lib/locale/lang/en'
+import "@/assets/styles/base.css";
+import "@/assets/styles/el-reset.css";
+import "@/assets/fonts/iconfont.css";
+import locale from "element-ui/lib/locale/lang/en";
 Vue.config.productionTip = false;
 //nprogress进度条
-import NProgress from "nprogress"
-import 'nprogress/nprogress.css'
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 Vue.use(ElementUI, {
   locale
 });
@@ -26,39 +28,41 @@ Vue.use(ElementUI, {
 
 //路由前置钩子（导航守卫）
 router.beforeEach((to, from, next) => {
-  NProgress.start()
+  NProgress.start();
   //用户登入之后，localStorage中有token
-  if (to.path === '/login') { // 访问登入页面 那么放行
-    next()
-  } else { // 访问别的页面
+  if (to.path === "/login") {
+    // 访问登入页面 那么放行
+    next();
+  } else {
+    // 访问别的页面
     // 判断是否登入 判断是否有token
-    const token = localStorage.getItem('stu-token')
+    const token = localStorage.getItem("stu-token");
     if (token) {
       //用户需要进入页面
       //判断vuex中sideMenu是否有值
       if (!store.state.sideMenu.length) {
-        store.dispatch("FETCH_MENULIST")
-          .then(() => {
-            next({
-              path: to.path
-            }) //这里要注意, next里面要传参数即要进入的页面的路由信息，因为next传参数后，当前要进入的路由会被废止，转而进入参数对应的路由，虽然是同一个路由，这么做主要是为了确保addRoutes生效了。
-          })
+        store.dispatch("FETCH_MENULIST").then(() => {
+          next({
+            path: to.path
+          }); //这里要注意, next里面要传参数即要进入的页面的路由信息，因为next传参数后，当前要进入的路由会被废止，转而进入参数对应的路由，虽然是同一个路由，这么做主要是为了确保addRoutes生效了。
+        });
       } else {
-        next()
+        next();
       }
-    } else { // 跳转到登入页
+    } else {
+      // 跳转到登入页
       next({
-        path: '/login'
-      })
+        path: "/login"
+      });
     }
   }
-})
+});
 //路由后置钩子处理面包屑
 router.afterEach((to, from) => {
-  let crumbsList = to.matched.slice(1)
-  store.commit("SET_CRUMBS",crumbsList)
-  NProgress.done()
-})
+  let crumbsList = to.matched.slice(1);
+  store.commit("SET_CRUMBS", crumbsList);
+  NProgress.done();
+});
 
 new Vue({
   router,

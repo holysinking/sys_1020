@@ -8,11 +8,17 @@
           <span slot="title">{{ item.meta.name }}</span>
         </template>
         <el-menu-item-group>
-          <sub-menu :sideMenu="item.children" :parentPath="'/'+item.path"></sub-menu>
+          <sub-menu
+            :sideMenu="item.children"
+          ></sub-menu>
         </el-menu-item-group>
       </el-submenu>
       <!-- 常规菜单 -->
-      <el-menu-item :index="parentPath+'/'+item.path" @click="jump(item.name)" v-else>
+      <el-menu-item
+        :index="item.path"
+        @click="jump(item.name)"
+        v-else
+      >
         <i :class="item.meta.icon"></i>
         <span slot="title">{{ item.meta.name }}</span>
       </el-menu-item>
@@ -25,26 +31,22 @@ export default {
   props: {
     sideMenu: {
       type: Array,
-      default: () => [], //定义默认数据
+      default: () => [] //定义默认数据
     },
-    parthPath: {
-      type: String,
-      default: ""
-    }
   },
   data() {
     return {
-      isCollapse: false,
+      isCollapse: false
     };
   },
   methods: {
     jump(name) {
       this.$router.push({ name });
-    },
+    }
   },
   mounted() {
     // console.log(this.sideMenu);
-  },
+  }
 };
 </script>
 <style scoped>

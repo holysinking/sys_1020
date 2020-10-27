@@ -9,29 +9,9 @@
     <div id="imgs"></div>
     <div class="loginContainer">
       <h1 class="title">学员管理系统</h1>
-      <i
-        :class="[
-          'jiaobiao',
-          'iconfont',
-          isWechat ? 'icon-diannaojiaobiao' : 'icon-erweimajiaobiao',
-        ]"
-        @click="isWechat = !isWechat"
-      ></i>
       <transition>
-        <!-- 二维码 -->
-        <div class="wechatLogin" v-if="isWechat">
-          <div class="scancode">
-            <div class="marsk" v-if="isScan">
-              <i class="iconfont icon-saomachenggong"></i>
-            </div>
-            <img src="" width="200" alt="" />
-          </div>
-          <p>请使用微信扫码登入</p>
-        </div>
         <el-form
-          v-else
           :model="loginForm"
-          status-icon
           :rules="rules"
           ref="loginForm"
           label-width="100px"
@@ -51,6 +31,21 @@
               @keydown.13.native="submitForm('loginForm')"
               autocomplete="off"
             ></el-input>
+          </el-form-item>
+          <!-- 验证码 -->
+          <el-form-item label="验证码" prop="captcha">
+            <el-input
+              class="captcha"
+              type="text"
+              v-model="loginForm.captcha"
+              @keydown.13.native="submitForm('loginForm')"
+              autocomplete="off"
+            ></el-input>
+            <span
+              class="captcha-svg"
+              @click="refreshCaptch"
+              v-html="captchaSvg"
+            ></span>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="submitForm('loginForm')"
@@ -74,7 +69,7 @@
 
 //5.校验不通过，跳转登录页
 
-import { login } from "@/api";
+import { login, getCpatcha, verifyCaptcha } from "@/api";
 import { mapMutations } from "vuex";
 export default {
   data() {
@@ -84,6 +79,7 @@ export default {
      * @params {String} value 输入值
      * @params {Function} callback 校验成功传参 不通过不传参
      */
+    //校验用户名
     var validateUsername = (rule, value, callback) => {
       var uPattern = /^[a-zA-Z0-9_-]{4,16}$/;
       //   if (!uPattern.test(value)) {
@@ -93,6 +89,7 @@ export default {
         callback();
       }
     };
+    //校验密码
     var validatePassword = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请输入密码"));
@@ -100,23 +97,54 @@ export default {
         callback();
       }
     };
+    //校验验证码
+    var validateCaptcha = (rule, value, callback) => {
+      if (value === "" || value.length !== 5) {
+        callback(new Error("请输入验证码"));
+      } else {
+        callback();
+      }
+    };
     return {
+      captchaSvg: "", //从服务器获取的验证码
       loginForm: {
         username: "",
         password: "",
+        captcha: "",
       },
       rules: {
         username: [{ validator: validateUsername, trigger: "blur" }],
         password: [{ validator: validatePassword, trigger: "blur" }],
+        captcha: [{ validator: validateCaptcha, trigger: "blur" }],
       },
     };
   },
+  mounted() {
+    this.set_captcha();
+  },
   methods: {
+    //刷新验证码
+    refreshCaptch() {
+      this.set_captcha();
+    },
+    //设置验证码
+    set_captcha() {
+      getCpatcha().then((res) => {
+        this.captchaSvg = res.data.img;
+      });
+    },
     ...mapMutations(["SET_USERINFO"]),
     submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate(async (valid) => {
         if (valid) {
           //代表本地校验通过
+          //先验证验证码是否正确在发送登录请求
+          let verify = await verifyCaptcha(this.loginForm.captcha);
+          if (!verify.data.state) {
+            //验证码不正确
+            this.$message.error("验证码错误");
+            return;
+          }
           // 打开登陆加载动画
           const loading = this.$loading({
             lock: true,
@@ -239,10 +267,10 @@ i.icon-saomachenggong {
   text-align: center;
 }
 .title {
-    color: #fff;
-    margin-top: 100px;
-    margin-bottom: 50px;
-  }
+  color: #fff;
+  margin-top: 100px;
+  margin-bottom: 50px;
+}
 video {
   position: fixed;
   right: 0;
@@ -284,8 +312,9 @@ video {
   border: 0px;
 }
 .el-input {
-  margin-left: -50px;
   width: 250px;
+  position: relative;
+  float: left;
 }
 .el-form-item__label {
   color: #606266 !important;
@@ -302,5 +331,20 @@ video {
   margin-top: 100px;
   margin-bottom: 50px;
 }
+/* 验证码 */
+.captcha-svg {
+  display: block;
+  float: left;
+  height: 40px;
+  margin-left: 16px;
+  width: 120px !important;
+  overflow: hidden;
+  background: #fff;
+  position: relative;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.captcha-svg svg {
+  width: 136px !important;
+}
 </style>
-
