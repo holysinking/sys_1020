@@ -6,8 +6,8 @@ export const login = (username, password) =>
     method: "post",
     data: {
       username,
-      password,
-    },
+      password
+    }
   });
 
 //获取登入日志
@@ -15,57 +15,63 @@ export const login = (username, password) =>
  *
  * @param {Object} _this 一个组件实例
  */
-export const getLoginLog = (_this) =>
+export const getLoginLog = _this =>
   axios.get("/getloginlog", {
     CancelToken: new CancelToken(function(c) {
       //c就是一个方法，可以终止请求
       _this.cancel = c; //相当于给组件实例,添加一个cancel属性
-    }),
+    })
   });
 
 //获取权限菜单
 export const getMenuList = () => axios.get("/permission/getMenuList");
 
 //获取学员信息
-export const getStuList = () => axios.get("/students/getstulist");
+export const getStuList = (params = {}) => {
+  console.log(params);
+  return axios({
+    url: "/students/getstulist",
+    params
+  });
+};
 
 //增加学员信息
-export const addStuDetail = (stuDetail) =>
+export const addStuDetail = stuDetail =>
   axios({
     url: "/students/addstu",
     method: "post",
-    data: stuDetail,
+    data: stuDetail
   });
 
 //删除学员
-export const delStu = (sId) => axios.get(`/students/delstu?sId=${sId}`);
+export const delStu = sId => axios.get(`/students/delstu?sId=${sId}`);
 
 //编辑学员信息
 export const updateStu = (updated = {}) =>
   axios({
     url: "/students/updatestu",
     method: "post",
-    data: updated,
+    data: updated
   });
 
 // 搜索学员
-export const searchStu = (params) => {
+export const searchStu = params => {
   return axios({
     url: "/students/searchstu",
-    params,
+    params
   });
 };
 
-//获取班级//students/getClasses
-export const getClasses = () => axios.get("/students/getClasses");
+//获取班级 /students/getclasses
+export const getClasses = () => axios.get("/students/getclasses");
 
 //获取验证码
 export const getCpatcha = () => axios.get("/users/getCaptcha");
 
 //校验验证码
-export const verifyCaptcha = (captcha) =>
+export const verifyCaptcha = captcha =>
   axios.get(`/users/verifyCaptcha?captcha=${captcha}`);
 
 // 微信登入 /users/wechatLogin
-export const wechatLogin = (wechatCode) =>
+export const wechatLogin = wechatCode =>
   axios.get(`/users/wechatLogin?wechatCode=${wechatCode}`);

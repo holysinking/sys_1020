@@ -110,13 +110,13 @@ export default {
       loginForm: {
         username: "",
         password: "",
-        captcha: "",
+        captcha: ""
       },
       rules: {
         username: [{ validator: validateUsername, trigger: "blur" }],
         password: [{ validator: validatePassword, trigger: "blur" }],
-        captcha: [{ validator: validateCaptcha, trigger: "blur" }],
-      },
+        captcha: [{ validator: validateCaptcha, trigger: "blur" }]
+      }
     };
   },
   mounted() {
@@ -129,13 +129,13 @@ export default {
     },
     //设置验证码
     set_captcha() {
-      getCpatcha().then((res) => {
+      getCpatcha().then(res => {
         this.captchaSvg = res.data.img;
       });
     },
     ...mapMutations(["SET_USERINFO"]),
     submitForm(formName) {
-      this.$refs[formName].validate(async (valid) => {
+      this.$refs[formName].validate(async valid => {
         if (valid) {
           //代表本地校验通过
           //先验证验证码是否正确在发送登录请求
@@ -150,12 +150,13 @@ export default {
             lock: true,
             text: "正在登入...",
             spinner: "el-icon-loading",
-            background: "rgba(0, 0, 0, 0.7)",
+            background: "rgba(0, 0, 0, 0.7)"
           });
           let { username, password } = this.loginForm;
           //发送登入请求
           login(username, password)
-            .then((res) => {
+            .then(res => {
+              console.log(res);
               //服务器响应，关闭loading
               loading.close();
               if (res.data.state) {
@@ -165,6 +166,10 @@ export default {
                 localStorage.setItem(
                   "stu-userInfo",
                   JSON.stringify(res.data.userInfo)
+                );
+                localStorage.setItem(
+                  "wf-permission-buttons",
+                  JSON.stringify(res.data.permission.buttons)
                 );
                 //跳转到主页
                 this.$router.push("/");
@@ -177,7 +182,7 @@ export default {
                 this.$message.error("用户名密码错误");
               }
             })
-            .catch((err) => {
+            .catch(err => {
               console.log(err, "err");
             });
         } else {
@@ -189,8 +194,8 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
-    },
-  },
+    }
+  }
 };
 </script>
 <style scoped>

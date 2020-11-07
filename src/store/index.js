@@ -2,29 +2,31 @@ import Vue from "vue";
 import Vuex from "vuex";
 Vue.use(Vuex);
 
-import {
-  getMenuList
-} from "@/api";
+import { getMenuList } from "@/api";
 import recursionRoutes from "../utils/recursionRoutes";
 import allRoutes from "../router/allRoutes";
 import DynamicRoutes from "../router/dynamicRoutes"; //动态路由
 import router from "../router"; //引入路由
 //引入recursionRoutes递归函数 处理用户路由
+
+let permissionButtons =
+  JSON.parse(localStorage.getItem("wf-permission-buttons")) || {};
 export default new Vuex.Store({
   state: {
     userInfo: JSON.parse(localStorage.getItem("stu-userInfo")) || {},
     sideMenu: [],
     crumbsList: [],
     stuForm: {
-      class: '', //班级
-      name: '', //学员的名字
-      age: '', //学员的年龄
-      city: '', //目前居住的城市
-      degree: '', //学历
-      productUrl: '', //项目地址
-      description: '', //一句话对自己的评价
-      headimgurl: '' //头像
-    }
+      class: "", //班级
+      name: "", //学员的名字
+      age: "", //学员的年龄
+      city: "", //目前居住的城市
+      degree: "", //学历
+      productUrl: "", //项目地址
+      description: "", //一句话对自己的评价
+      headimgurl: "" //头像
+    },
+    permissionButtons
   },
   mutations: {
     //更改userInfo
@@ -48,9 +50,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async FETCH_MENULIST({
-      commit
-    }) {
+    async FETCH_MENULIST({ commit }) {
       //获取用户菜单
       //发起异步请求 获取用户菜单
       let res = await getMenuList();

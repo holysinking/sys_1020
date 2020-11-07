@@ -13,7 +13,7 @@ axios.create({
 });
 //创建请求拦截器，可以给每个请求都携带上想要传递的内存
 
-//中断请求属性
+//中断请求属性]
 export let CancelToken = axios.CancelToken;
 
 axios.interceptors.request.use(config => {
@@ -28,9 +28,7 @@ axios.interceptors.request.use(config => {
 });
 
 axios.interceptors.response.use(config => {
-  const {
-    data
-  } = config;
+  const { data } = config;
   if (data) {
     // 如果后台返回1004状态码 则表示校验失败 返回10022表示后台登入态失效 页面需要跳转到登入页
     if (data.code === "1004" || data.code === "10022") {

@@ -84,11 +84,12 @@
           <el-table-column prop="productUrl" label="项目地址" align="center">
           </el-table-column>
           <el-table-column prop="" label="操作" align="center">
-            <template scope="scope">
+            <template slot-scope="{ row }">
               <el-button
                 type="primary"
                 class="btn"
                 icon="el-icon-view"
+                v-haspermission="'read'"
                 @click="$router.push({ name: 'studentProfile' })"
                 >查看</el-button
               >
@@ -96,14 +97,16 @@
                 type="primary"
                 class="btn"
                 icon="el-icon-edit"
-                @click="editStudent(scope.row)"
+                v-haspermission="'edit'"
+                @click="editStudent(row)"
                 >编辑</el-button
               >
               <el-button
                 type="danger"
                 class="btn"
                 icon="el-icon-delete"
-                @click="delStudent(scope.row)"
+                v-haspermission="'delete'"
+                @click="delStudent(row)"
                 >删除</el-button
               >
             </template>
@@ -130,12 +133,13 @@
 <script>
 import dialog from "../../../components/dialog";
 import { addStuDetail, getStuList, getClasses, delStu, searchStu } from "@/api";
+import qee from "qf-export-excel";
 export default {
   data() {
     return {
       params: {
         class: "",
-        count: 5,
+        count: 5
       },
       dataPage: "", // 页码
       dataCount: 5, // 每页展示的数量
@@ -145,19 +149,12 @@ export default {
       // 表格的数据对象
       blurSearchValue: "",
       list: [],
-      stuData: [
-        {
-          headimgurl: 123,
-          name: 123,
-          class: 123,
-          productUrl: 123,
-        },
-      ],
+      stuData: [],
       //表格加载动画控制
-      loading: false,
+      loading: true,
       searchList: [],
       classes: "",
-      searchValue: "",
+      searchValue: ""
     };
   },
   methods: {
@@ -176,20 +173,20 @@ export default {
       const titleList = [
         {
           title: "头像",
-          key: "headimgurl",
+          key: "headimgurl"
         },
         {
           title: "姓名",
-          key: "name",
+          key: "name"
         },
         {
           title: "班级",
-          key: "class",
+          key: "class"
         },
         {
           title: "项目",
-          key: "productUrl",
-        },
+          key: "productUrl"
+        }
       ];
       const dataSource = this.stuData;
       qee(titleList, dataSource, "学员数据");
@@ -200,7 +197,7 @@ export default {
       // 充值dataPage的值 以免后天查询不到
       this.dataPage = 1;
       // 发送获取班级的请求
-      getClasses().then((res) => {
+      getClasses().then(res => {
         if (res.data && res.data.state) {
           this.classOptions = res.data.data;
         }
@@ -221,9 +218,9 @@ export default {
       const params = {
         key,
         count,
-        page,
+        page
       };
-      searchStu(params).then((res) => {
+      searchStu(params).then(res => {
         if (res.data && res.data.state) {
           // 更改表格数据对象
           this.stuData = res.data.data;
@@ -242,21 +239,21 @@ export default {
     //更新表格数据
     updateStuTable(params) {
       this.loading = true;
-      params = this.params
-      params.count = this.dataCount || ''
-      params.page = this.dataPage || ''
+      params = this.params;
+      params.count = this.dataCount || "";
+      params.page = this.dataPage || "";
       getStuList(params)
-        .then((res) => {
+        .then(res => {
           if (res.data && res.data.state) {
             this.stuData = res.data.data;
-            this.total = res.data.total// 数据总数
+            this.total = res.data.total; // 数据总数
             this.loading = false;
           } else {
             this.$message.warning("数据获取失败");
             this.loading = false;
           }
         })
-        .catch((err) => {
+        .catch(err => {
           this.$message.error("网络错误或者数据获取失败");
           this.loading = false;
         });
@@ -281,11 +278,11 @@ export default {
         this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
-          type: "warning",
+          type: "warning"
         })
-          .then((res) => {
+          .then(res => {
             delStu(row.sId)
-              .then((res) => {
+              .then(res => {
                 if (res.data && res.data.state) {
                   this.$message.success("删除成功");
                   this.updateStuTable();
@@ -293,11 +290,11 @@ export default {
                   this.$message.warning("删除失败");
                 }
               })
-              .catch((err) => {
+              .catch(err => {
                 this.$message.error("删除出错");
               });
           })
-          .catch((err) => {
+          .catch(err => {
             this.$message.info("已取消删除");
           });
       } else {
@@ -314,9 +311,9 @@ export default {
       const count = this.dataCount;
       const params = {
         key,
-        count,
+        count
       };
-      searchStu(params).then((res) => {
+      searchStu(params).then(res => {
         if (res.data && res.data.state) {
           console.log(res.data.data);
           // 更改表格数据对象
@@ -336,10 +333,10 @@ export default {
       const count = this.dataCount;
       const params = {
         key,
-        count,
+        count
       };
       searchStu(params)
-        .then((res) => {
+        .then(res => {
           if (res.data && res.data.state) {
             console.log(res.data.data);
             this.searchList = res.data.data;
@@ -347,7 +344,7 @@ export default {
             this.$message.warning("搜索失败");
           }
         })
-        .catch((err) => {
+        .catch(err => {
           this.$message.error("搜索出错");
         });
     },
@@ -357,7 +354,7 @@ export default {
         return;
       }
       //发送获取班级的请求
-      getClasses().then((res) => {
+      getClasses().then(res => {
         if (res.data && res.data.state) {
           // console.log(res);
         }
@@ -366,7 +363,7 @@ export default {
     //选择班级
     classChange(query) {
       // console.log(query);
-    },
+    }
   },
   mounted() {
     //页面加载获取表格数据
@@ -376,8 +373,8 @@ export default {
     });
   },
   components: {
-    "stu-dialog": dialog,
-  },
+    "stu-dialog": dialog
+  }
 };
 </script>
 <style scoped>
@@ -405,5 +402,12 @@ export default {
 }
 .pagination {
   margin-top: 20px;
+}
+.exportExcel {
+  height: 42px;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: flex-end;
 }
 </style>

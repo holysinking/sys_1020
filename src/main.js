@@ -2,14 +2,15 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-import bus from "./utils/bus"
-Vue.prototype.$bus = bus
+import bus from "./utils/bus";
+Vue.prototype.$bus = bus;
 // 引入element-ui
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 // 引入全局css和element-rest
 import "@/assets/styles/base.css";
 import "@/assets/styles/el-reset.css";
+// 引入图标样式
 import "@/assets/fonts/iconfont.css";
 import locale from "element-ui/lib/locale/lang/en";
 Vue.config.productionTip = false;
@@ -20,12 +21,28 @@ Vue.use(ElementUI, {
   locale
 });
 
-//按需引入
-// import {Carousel} from "element-ui"
-
-//注册组件
-// Vue.component()
-
+//引入鉴权的方法
+import has from "./utils/has";
+Vue.prototype.$has = has;
+Vue.prototype.$bus = bus;
+Vue.use(ElementUI);
+// Vue.config.productionTip = false
+//定义全局自定义指令 判断是否具备相应按钮权限
+Vue.directive("haspermission", {
+  bind(el, binding, VNode) {
+    // console.log(el)
+    let buttons = localStorage.getItem("wf-permission-buttons");
+    if (!has(buttons, binding.value)) {
+      //禁用按钮
+      // console.log(el.className)
+      //先储存class类名 在这基础上加上is-disabled禁用按钮
+      let className = el.className;
+      el.className = className + " " + "is-disabled";
+      el.disabled = true;
+      // console.log(el)
+    }
+  }
+});
 //路由前置钩子（导航守卫）
 router.beforeEach((to, from, next) => {
   NProgress.start();
